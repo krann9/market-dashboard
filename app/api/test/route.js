@@ -10,15 +10,3 @@ export async function GET() {
     ]
   });
 }
-```
-
-5. **Commit changes**
-
----
-
-## ✅ Step 2: Test the API
-
-1. Wait 2-3 minutes for Vercel to deploy
-2. Open this URL in your browser:
-```
-   https://market-dashboard-beige.vercel.app/api/test
