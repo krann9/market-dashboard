@@ -29,6 +29,37 @@ export default function Dashboard() {
           fetchBTC();
     }, []);
 
+    // Fetch Treasury Yields and S&P 500 from FRED API
+    useEffect(() => {
+          const fetchFREDData = async () => {
+                  try {
+                            const FRED_API_KEY = 'e8f12e41f115b52f9a65b3bcc42a4b63';
+                            const series = ['GS2', 'GS10', 'GS30', 'SP500'];
+                            const rates = {};
+
+                            for (const seriesId of series) {
+                                        const res = await fetch(`https://api.stlouisfed.org/fred/series/observations?series_id=${seriesId}&api_key=${FRED_API_KEY}&limit=1&sort_order=desc`);
+                                        const data = await res.json();
+                                        if (data.observations && data.observations.length > 0) {
+                                                      const value = parseFloat(data.observations[0].value);
+                                                      if (seriesId === 'GS2') rates.us2y = value;
+                                                      if (seriesId === 'GS10') rates.us10y = value;
+                                                      if (seriesId === 'GS30') rates.us30y = value;
+                                                      if (seriesId === 'SP500') rates.sp500 = value;
+                                        }
+                            }
+
+                            if (Object.keys(rates).length > 0) {
+                                        setBondRates(prev => ({ ...prev, ...rates }));
+                            }
+                  } catch (error) {
+                            console.error('Failed to fetch FRED data:', error);
+                  }
+          };
+
+          fetchFREDData();
+    }, []);
+
   const [sp500Data] = useState(() => {
     const data = [];
     const baseValue = 4500;
