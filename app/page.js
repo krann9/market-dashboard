@@ -33,13 +33,11 @@ export default function Dashboard() {
     useEffect(() => {
           const fetchFREDData = async () => {
                   try {
-                            const FRED_API_KEY = 'e8f12e41f115b52f9a65b3bcc42a4b63';
                             const series = ['GS2', 'GS10', 'GS30', 'SP500'];
                             const rates = {};
 
                             for (const seriesId of series) {
-                                        const res = await fetch(`https://api.stlouisfed.org/fred/series/observations?series_id=${seriesId}&api_key=${FRED_API_KEY}&limit=1&sort_order=desc`);
-                                        const data = await res.json();
+        const res = await fetch(`/api/fred?series_id=${seriesId}`);                                        const data = await res.json();
                                         if (data.observations && data.observations.length > 0) {
                                                       const value = parseFloat(data.observations[0].value);
                                                       if (seriesId === 'GS2') rates.us2y = value;
