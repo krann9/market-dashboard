@@ -5,7 +5,7 @@ import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, AreaChart,
 import { TrendingUp, TrendingDown, DollarSign, Activity, Globe, BarChart3, Eye } from 'lucide-react';
 
 export default function Dashboard() {
-  constcons [btcPrice, setBtcPrice] = useState({ price: 0, change: 0, high24h: 0, low24h: 0, volume: '0' });
+  const [btcPrice, setBtcPrice] = useState({ price: 0, change: 0, high24h: 0, low24h: 0, volume: '0' });
 
     // Fetch Bitcoin price from API
     useEffect(() => {
