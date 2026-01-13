@@ -1,4 +1,5 @@
-'use client';
+'const [axsStocks]
+use client';
 
 import React, { useState, useEffect } from 'react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
@@ -104,8 +105,44 @@ export default function Dashboard() {
     }
   ]);
 
+    const [m2Data, setM2Data] = useState({
+          current: '13.45T',
+              change: 2.3,
+                  ytd: 1.8
+                    });
+    })
+
   const [time, setTime] = useState(new Date());
 
+
+    // Fetch M2 Money Supply from FRED API
+      useEffect(() => {
+          const fetchM2Data = async () => {
+                try {
+                        const res = await fetch(`/api/fred?series_id=M2SL`);
+                                const data = await res.json();
+                                        if (data.observations && data.observations.length > 0) {
+                                                  const latestValue = parseFloat(data.observations[0].value);
+                                                            const previousYear = data.observations[52]?.value;
+                                                                      const ytdValue = data.observations[1]?.value;
+                                                                                
+                                                                                          const yoyChange = previousYear ? ((latestValue - parseFloat(previousYear)) / parseFloat(previousYear) * 100).toFixed(2) : 0;
+                                                                                                    const ytdChange = ytdValue ? ((latestValue - parseFloat(ytdValue)) / parseFloat(ytdValue) * 100).toFixed(2) : 0;
+                                                                                                              
+                                                                                                                        setM2Data({
+                                                                                                                                    current: (latestValue / 1000000).toFixed(2) + 'T',
+                                                                                                                                                change: yoyChange,
+                                                                                                                                                            ytd: ytdChange
+                                                                                                                                                                      });
+                                                                                                                                                                              }
+                                                                                                                                                                                    } catch (error) {
+                                                                                                                                                                                            console.error('Failed to fetch M2 data:', error);
+                                                                                                                                                                                                  }
+                                                                                                                                                                                                      };
+                                                                                                                                                                                                          
+                                                                                                                                                                                                              fetchM2Data();
+                                                                                                                                                                                                                }, []);
+Bitcoin Price Card
   // Live clock
   useEffect(() => {
     const timer = setInterval(() => setTime(new Date()), 1000);
@@ -352,6 +389,35 @@ export default function Dashboard() {
             </div>
           </div>
         </div>
+
+                    {/* M2 Money Supply Card */}
+                                <div className="data-card p-6 rounded-lg" style={{ animationDelay: '0.4s' }}>
+                                              <div className="flex items-center gap-3 mb-4">
+                                                              <TrendingUp className="text-amber-400" size={28} />
+                                                                              <div>
+                                                                                                <h3 className="text-xs text-zinc-500 tracking-widest">M2 MONEY SUPPLY</h3>
+                                                                                                                  <p className="text-sm text-zinc-400 mt-1">Federal Reserve Data</p>
+                                                                                                                                  </div>
+                                                                                                                                                </div>
+                                                                                                                                                              <div className="space-y-3">
+                                                                                                                                                                              <div className="flex items-center justify-between p-3 bg-zinc-900/40 rounded">
+                                                                                                                                                                                                <span className="text-zinc-400 text-sm">Current M2</span>
+                                                                                                                                                                                                                  <span className="text-xl font-semibold text-zinc-100">${m2Data.current}</span>
+                                                                                                                                                                                                                                  </div>
+                                                                                                                                                                                                                                                  <div className="flex items-center justify-between p-3 bg-zinc-900/40 rounded">
+                                                                                                                                                                                                                                                                    <span className="text-zinc-400 text-sm">YoY Change</span>
+                                                                                                                                                                                                                                                                                      <span className={`text-xl font-semibold ${m2Data.change >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                                                                                                                                                                                                                                                                                                          {m2Data.change >= 0 ? '+' : ''}{m2Data.change}%
+                                                                                                                                                                                                                                                                                                                            </span>
+                                                                                                                                                                                                                                                                                                                                            </div>
+                                                                                                                                                                                                                                                                                                                                                            <div className="flex items-center justify-between p-3 bg-zinc-900/40 rounded">
+                                                                                                                                                                                                                                                                                                                                                                              <span className="text-zinc-400 text-sm">YTD Change</span>
+                                                                                                                                                                                                                                                                                                                                                                                                <span className={`text-xl font-semibold ${m2Data.ytd >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                                                                                                                                                                                                                                                                                                                                                                                                                    {m2Data.ytd >= 0 ? '+' : ''}{m2Data.ytd}%
+                                                                                                                                                                                                                                                                                                                                                                                                                                      </span>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                      </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </div>
       </div>
 
       {/* ASX Watchlist */}
