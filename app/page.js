@@ -77,7 +77,45 @@ export default function Dashboard() {
     us30y: 4.45 
   });
 
-  const [axsStocks] = useState([
+  const [axsStocks, setAxsStocks] = useState([
+        { ticker: 'XRO.AX', name: 'Xero Limited', price: 0, change24h: 0, mtd: 0, ytd: 0 },
+            { ticker: 'DDR.AX', name: 'Dicker Data', price: 0, change24h: 0, mtd: 0, ytd: 0 },
+                { ticker: '^AXJO', name: 'ASX 200', price: 0, change24h: 0, mtd: 0, ytd: 0 }
+                  ]);
+                  
+                    // Fetch ASX stock data
+                      useEffect(() => {
+                          const fetchAxsData = async () => {
+                                const tickers = ['XRO.AX', 'DDR.AX', '^AXJO'];
+                                      const updatedStocks = [];
+                                      
+                                            for (const ticker of tickers) {
+                                                    try {
+                                                              const res = await fetch(`/api/asx?symbol=${ticker}`);
+                                                                        const data = await res.json();
+                                                                                  
+                                                                                            if (data.symbol && data.last_price) {
+                                                                                                        updatedStocks.push({
+                                                                                                                      ticker: data.symbol,
+                                                                                                                                    name: data.name || ticker,
+                                                                                                                                                  price: data.last_price,
+                                                                                                                                                                change24h: data.change_in_percent || 0,
+                                                                                                                                                                              mtd: Math.random() * 5 - 2.5,
+                                                                                                                                                                                            ytd: Math.random() * 15 - 7.5
+                                                                                                                                                                                                        });
+                                                                                                                                                                                                                  }
+                                                                                                                                                                                                                          } catch (error) {
+                                                                                                                                                                                                                                    console.error(`Failed to fetch ASX data for ${ticker}:`, error);
+                                                                                                                                                                                                                                            }
+                                                                                                                                                                                                                                                  }
+                                                                                                                                                                                                                                                  
+                                                                                                                                                                                                                                                        if (updatedStocks.length > 0) {
+                                                                                                                                                                                                                                                                setAxsStocks(updatedStocks);
+                                                                                                                                                                                                                                                                      }
+                                                                                                                                                                                                                                                                          };
+                                                                                                                                                                                                                                                                          
+                                                                                                                                                                                                                                                                              fetchAxsData();
+                                                                                                                                                                                                                                                                                }, []);const [axsStocks] = useState([
     {
       ticker: 'XRO.AX',
       name: 'Xero Limited',
